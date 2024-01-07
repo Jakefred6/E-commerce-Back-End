@@ -17,13 +17,18 @@ Welcome to the E-Commerce API, a robust backend system for managing products, ca
 - [Installation](#installation)
 
 ## Demo
+A demo video showcasing the functionality and capabilities of this e-commerce backend can be found
+
+- https://github.com/Jakefred6/E-commerce-Back-End/blob/master/Develop/video/Walkthrough.mkv
+
+#### OR 
+
+<img src='Develop\video\Walkthrough.gif'>
 
 ## Usage
 
 ```terminal
-
 npm start
-
 ````
 
 This will run the server on `http://localhost:3001`. The app is using
@@ -32,9 +37,9 @@ This will run the server on `http://localhost:3001`. The app is using
 
 The project structure is as follows:
 
-- `src/models`: Defines Sequelize models for database tables.
-- `src/routes`: Defines API routes using Express.js and for handling business logic.
-- `src/config`: Configuration files, including database configuration.
+- `models`: Defines Sequelize models for database tables.
+- `routes`: Defines API routes using Express.js and for handling business logic.
+- `config`: Configuration files, including database configuration.
 - `db`: Contains database schema and seed data.
 
 ## Database Models
