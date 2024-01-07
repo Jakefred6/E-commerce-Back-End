@@ -1,22 +1,62 @@
-const router = require('express').Router();
-const { Product, Category, Tag, ProductTag } = require('../../models');
+const router = require("express").Router();
+const { Product, Category, Tag, ProductTag } = require("../../models");
 
 // The `/api/products` endpoint
 
 // get all products
-router.get('/', (req, res) => {
-  // find all products
-  // be sure to include its associated Category and Tag data
+router.get("/", (req, res) => {
+  // Retrieve all products, including associated Category and Tag information
+  Product.findAll({
+    include: [
+      Category,
+      {
+        model: Tag,
+        through: ProductTag,
+      },
+    ],
+  })
+    .then((products) => {
+      // Successfully retrieved products, send JSON response
+      res.status(200).json(products);
+    })
+    .catch((error) => {
+      // Error handling: log the error and send Internal Server Error response
+      console.error("Error getting products:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    });
 });
 
 // get one product
-router.get('/:id', (req, res) => {
-  // find a single product by its `id`
-  // be sure to include its associated Category and Tag data
+router.get("/:id", (req, res) => {
+  const productId = req.params.id;
+
+  // Find product by its `id` value, including associated Category and Tag information
+  Product.findByPk(productId, {
+    include: [
+      Category,
+      {
+        model: Tag,
+        through: ProductTag,
+      },
+    ],
+  })
+    .then((product) => {
+      // Check if product is found and send the appropriate response
+      if (product) {
+        res.status(200).json(product);
+      } else {
+        res.status(404).json({ error: "Product not found" });
+      }
+    })
+    .catch((error) => {
+      // Error handling: log the error and send Internal Server Error response
+      console.error("Error getting product by ID:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    });
 });
 
 // create new product
-router.post('/', (req, res) => {
+router.post("/", (req, res) => {
   /* req.body should look like this...
     {
       product_name: "Basketball",
@@ -48,7 +88,7 @@ router.post('/', (req, res) => {
 });
 
 // update product
-router.put('/:id', (req, res) => {
+router.put("/:id", (req, res) => {
   // update product data
   Product.update(req.body, {
     where: {
@@ -57,9 +97,8 @@ router.put('/:id', (req, res) => {
   })
     .then((product) => {
       if (req.body.tagIds && req.body.tagIds.length) {
-
         ProductTag.findAll({
-          where: { product_id: req.params.id }
+          where: { product_id: req.params.id },
         }).then((productTags) => {
           // create filtered list of new tag_ids
           const productTagIds = productTags.map(({ tag_id }) => tag_id);
@@ -92,8 +131,29 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
-  // delete one product by its `id` value
+router.delete("/:id", (req, res) => {
+  const productId = req.params.id;
+
+  // Find product by its `id` value
+  Product.findByPk(productId)
+    .then((product) => {
+      // Check if product is found
+      if (product) {
+        return product.destroy();
+      } else {
+        // If product not found, send 404 response
+        res.status(404).json({ error: "Product not found" });
+      }
+    })
+    .then(() => {
+      // Send 200 response (No Content) after successful deletion
+      res.status(200).send();
+    })
+    .catch((error) => {
+      // Error handling: log the error and send Internal Server Error response
+      console.error("Error deleting product:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    });
 });
 
 module.exports = router;
