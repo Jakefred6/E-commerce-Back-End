@@ -147,7 +147,7 @@ router.delete("/:id", (req, res) => {
     })
     .then(() => {
       // Send 200 response (No Content) after successful deletion
-      res.status(200).send();
+      res.status(200).send({ message: "Product Deleted Successfully" });
     })
     .catch((error) => {
       // Error handling: log the error and send Internal Server Error response
